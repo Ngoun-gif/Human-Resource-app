@@ -3,23 +3,22 @@ server:
 
 spring:
   application:
-    name: com.hr.management.system
+    name: hr-management-system
 
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres?currentSchema=hr_management
     username: postgres
-    password: 
+    password:
     driver-class-name: org.postgresql.Driver
 
   jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
       hibernate:
-        ddl-auto: update
-      show-sql: true
-      properties:
-        hibernate:
-          "[format_sql]": true
-          "[default_schema]": hr_manag
-        enabled: always
+        "[format_sql]": true
+        "[default_schema]": hr_management
 
 springdoc:
   api-docs:
@@ -28,7 +27,6 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
-
 
 logging:
   level:
