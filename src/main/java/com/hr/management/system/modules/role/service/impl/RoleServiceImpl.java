@@ -10,6 +10,7 @@ import com.hr.management.system.modules.role.repository.RoleRepository;
 import com.hr.management.system.modules.role.service.RoleService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +20,9 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Role save(Role role) {
+        if (role == null) {
+            throw new IllegalArgumentException("Role cannot be null");
+        }
         return roleRepository.save(role);
     }
 
@@ -28,7 +32,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public Optional<Role> findById(Long id) {
+    public Optional<Role> findById(@NonNull Long id) {
         return roleRepository.findById(id);
     }
 

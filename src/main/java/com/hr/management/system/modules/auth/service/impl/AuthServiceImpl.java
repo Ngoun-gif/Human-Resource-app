@@ -62,12 +62,13 @@ public class AuthServiceImpl implements AuthService {
         }
 
         Role staffRole = roleRepository.findByName("STAFF")
-                .orElseGet(() -> roleRepository.save(
-                        Role.builder()
-                                .name("STAFF")
-                                .description("Default Staff Role")
-                                .build()
-                ));
+                .orElseGet(() -> {
+                    Role newRole = new Role();
+                    newRole.setName("STAFF");
+                    newRole.setDescription("Default Staff Role");
+                    Role savedRole = roleRepository.save(newRole);
+                    return savedRole != null ? savedRole : newRole;
+                });
 
         User user = User.builder()
                 .username(request.getUsername())
@@ -77,7 +78,7 @@ public class AuthServiceImpl implements AuthService {
                 .roles(Set.of(staffRole))
                 .build();
 
-        userRepository.save(user);
+        user = userRepository.save(user);
 
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(user.getUsername());
         String token = jwtService.generateToken(userDetails);
