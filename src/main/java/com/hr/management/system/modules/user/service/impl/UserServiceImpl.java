@@ -74,7 +74,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse create(UserCreateRequest request) {
+    public UserResponse create(UserCreateRequest request, String currentUsername) {
         String username = normalizeUsername(request.getUsername());
         String email = normalizeEmail(request.getEmail());
 
@@ -97,6 +97,8 @@ public class UserServiceImpl implements UserService {
                 .phone(normalizePhone(request.getPhone()))
                 .enabled(request.getEnabled())
                 .roles(roles)
+                .createdBy(currentUsername)
+                .updatedBy(currentUsername)
                 .build();
 
         return toResponse(userRepository.save(user));
@@ -193,6 +195,10 @@ public class UserServiceImpl implements UserService {
                                 .id(role.getId())
                                 .name(role.getName())
                                 .description(role.getDescription())
+                                .createdBy(role.getCreatedBy())
+                                .updatedBy(role.getUpdatedBy())
+                                .createdAt(role.getCreatedAt())
+                                .updatedAt(role.getUpdatedAt())
                                 .build())
                         .collect(Collectors.toSet()))
                 .build();

@@ -66,7 +66,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public RoleResponse create(RoleCreateRequest request) {
+    public RoleResponse create(RoleCreateRequest request, String currentUsername) {
         String roleName = normalizeRoleName(request.getName());
 
         if (roleRepository.existsByName(roleName)) {
@@ -76,13 +76,15 @@ public class RoleServiceImpl implements RoleService {
         Role role = Role.builder()
                 .name(roleName)
                 .description(normalizeDescription(request.getDescription()))
+                .createdBy(currentUsername)
+                .updatedBy(currentUsername)
                 .build();
 
         return toResponse(roleRepository.save(role));
     }
 
     @Override
-    public RoleResponse update(Long id, RoleUpdateRequest request) {
+    public RoleResponse update(Long id, RoleUpdateRequest request, String currentUsername) {
         Role role = findRoleById(id);
         String newName = normalizeRoleName(request.getName());
 
@@ -96,6 +98,7 @@ public class RoleServiceImpl implements RoleService {
 
         role.setName(newName);
         role.setDescription(normalizeDescription(request.getDescription()));
+        role.setUpdatedBy(currentUsername);
 
         return toResponse(roleRepository.save(role));
     }
@@ -126,6 +129,10 @@ public class RoleServiceImpl implements RoleService {
                 .id(role.getId())
                 .name(role.getName())
                 .description(role.getDescription())
+                .createdBy(role.getCreatedBy())
+                .updatedBy(role.getUpdatedBy())
+                .createdAt(role.getCreatedAt())
+                .updatedAt(role.getUpdatedAt())
                 .build();
     }
 

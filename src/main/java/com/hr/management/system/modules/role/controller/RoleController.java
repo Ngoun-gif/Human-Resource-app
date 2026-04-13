@@ -1,10 +1,10 @@
 package com.hr.management.system.modules.role.controller;
 
-import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hr.management.system.common.dto.PageResponse;
@@ -22,53 +21,52 @@ import com.hr.management.system.modules.role.dto.request.RoleUpdateRequest;
 import com.hr.management.system.modules.role.dto.response.RoleResponse;
 import com.hr.management.system.modules.role.service.RoleService;
 
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/roles")
+@RequestMapping("/api/roles")
 @RequiredArgsConstructor
-@SecurityRequirement(name = "bearerAuth")
 public class RoleController {
 
     private final RoleService roleService;
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public PageResponse<RoleResponse> getAll(
+    public ResponseEntity<PageResponse<RoleResponse>> getAll(
             @RequestParam(required = false) String search,
-            @Parameter(description = "Pagination: page, size, sort=field,asc or field,desc")
-            @ParameterObject
-            @PageableDefault(page = 0, size = 10, sort = "id") Pageable pageable
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
-        return roleService.getAll(search, pageable);
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(roleService.getAll(search, pageable));
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public RoleResponse getById(@PathVariable Long id) {
-        return roleService.getById(id);
+    public ResponseEntity<RoleResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(roleService.getById(id));
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('ADMIN')")
-    public RoleResponse create(@Valid @RequestBody RoleCreateRequest request) {
-        return roleService.create(request);
+    public ResponseEntity<RoleResponse> create(
+            @Valid @RequestBody RoleCreateRequest request,
+            Authentication authentication
+    ) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(roleService.create(request, authentication.getName()));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public RoleResponse update(@PathVariable Long id, @Valid @RequestBody RoleUpdateRequest request) {
-        return roleService.update(id, request);
+    public ResponseEntity<RoleResponse> update(
+            @PathVariable Long id,
+            @Valid @RequestBody RoleUpdateRequest request,
+            Authentication authentication
+    ) {
+        return ResponseEntity.ok(roleService.update(id, request, authentication.getName()));
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasRole('ADMIN')")
-    public void delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         roleService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

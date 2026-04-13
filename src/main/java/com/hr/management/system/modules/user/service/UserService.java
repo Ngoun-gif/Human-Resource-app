@@ -16,7 +16,7 @@ public interface UserService {
 
     UserResponse getById(Long id);
 
-    UserResponse create(UserCreateRequest request);
+    UserResponse create(UserCreateRequest request, String currentUsername);
 
     UserResponse update(Long id, UserUpdateRequest request, String currentUsername);
 

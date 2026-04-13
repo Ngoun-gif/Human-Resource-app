@@ -16,9 +16,9 @@ public interface RoleService {
 
     RoleResponse getById(Long id);
 
-    RoleResponse create(RoleCreateRequest request);
+    RoleResponse create(RoleCreateRequest request, String currentUsername);
 
-    RoleResponse update(Long id, RoleUpdateRequest request);
+    RoleResponse update(Long id, RoleUpdateRequest request, String currentUsername);
 
     void delete(Long id);
 }

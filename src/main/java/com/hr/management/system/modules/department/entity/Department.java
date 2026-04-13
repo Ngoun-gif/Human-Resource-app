@@ -1,4 +1,4 @@
-package com.hr.management.system.modules.role.entity;
+package com.hr.management.system.modules.department.entity;
 
 import java.time.LocalDateTime;
 
@@ -17,19 +17,19 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "departments")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Role {
+public class Department {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(nullable = false, unique = true, length = 100)
     private String name;
 
     @Column(length = 255)
