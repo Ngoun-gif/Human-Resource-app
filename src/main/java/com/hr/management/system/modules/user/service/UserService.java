@@ -1,16 +1,24 @@
 package com.hr.management.system.modules.user.service;
 
-import java.util.List;
-import java.util.Optional;
+import org.springframework.data.domain.Pageable;
 
+import com.hr.management.system.common.dto.PageResponse;
+import com.hr.management.system.modules.user.dto.request.UserCreateRequest;
+import com.hr.management.system.modules.user.dto.request.UserUpdateRequest;
+import com.hr.management.system.modules.user.dto.response.UserResponse;
 import com.hr.management.system.modules.user.entity.User;
 
 public interface UserService {
-    User save(User user);
-    List<User> findAll();
-    Optional<User> findById(Long id);
-    Optional<User> findByUsername(String username);
-    Optional<User> findByEmail(String email);
-    boolean existsByUsername(String username);
-    boolean existsByEmail(String email);
+
+    User findEntityByUsername(String username);
+
+    PageResponse<UserResponse> getAll(String search, Pageable pageable);
+
+    UserResponse getById(Long id);
+
+    UserResponse create(UserCreateRequest request);
+
+    UserResponse update(Long id, UserUpdateRequest request, String currentUsername);
+
+    void delete(Long id, String currentUsername);
 }

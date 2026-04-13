@@ -1,11 +1,13 @@
 package com.hr.management.system.modules.role.service.impl;
 
-import java.util.List;
 import java.util.Locale;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hr.management.system.common.dto.PageResponse;
 import com.hr.management.system.modules.role.dto.request.RoleCreateRequest;
 import com.hr.management.system.modules.role.dto.request.RoleUpdateRequest;
 import com.hr.management.system.modules.role.dto.response.RoleResponse;
@@ -36,11 +38,25 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<RoleResponse> getAll() {
-        return roleRepository.findAll()
-                .stream()
-                .map(this::toResponse)
-                .toList();
+    public PageResponse<RoleResponse> getAll(String search, Pageable pageable) {
+        Page<Role> roles;
+
+        if (search != null && !search.isBlank()) {
+            String keyword = search.trim();
+            roles = roleRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+                    keyword, keyword, pageable
+            );
+        } else {
+            roles = roleRepository.findAll(pageable);
+        }
+
+        return PageResponse.<RoleResponse>builder()
+                .data(roles.getContent().stream().map(this::toResponse).toList())
+                .page(roles.getNumber())
+                .size(roles.getSize())
+                .total(roles.getTotalElements())
+                .totalPages(roles.getTotalPages())
+                .build();
     }
 
     @Override

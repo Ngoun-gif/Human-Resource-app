@@ -2,6 +2,8 @@ package com.hr.management.system.modules.user.repository;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.hr.management.system.modules.user.entity.User;
@@ -17,4 +19,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmailAndIdNot(String email, Long id);
 
     boolean existsByRoles_Id(Long roleId);
+
+    Page<User> findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(
+            String username,
+            String email,
+            String firstName,
+            String lastName,
+            Pageable pageable
+    );
 }

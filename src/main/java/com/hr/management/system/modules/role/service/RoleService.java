@@ -1,7 +1,8 @@
 package com.hr.management.system.modules.role.service;
 
-import java.util.List;
+import org.springframework.data.domain.Pageable;
 
+import com.hr.management.system.common.dto.PageResponse;
 import com.hr.management.system.modules.role.dto.request.RoleCreateRequest;
 import com.hr.management.system.modules.role.dto.request.RoleUpdateRequest;
 import com.hr.management.system.modules.role.dto.response.RoleResponse;
@@ -11,7 +12,7 @@ public interface RoleService {
 
     Role findEntityByName(String name);
 
-    List<RoleResponse> getAll();
+    PageResponse<RoleResponse> getAll(String search, Pageable pageable);
 
     RoleResponse getById(Long id);
 
