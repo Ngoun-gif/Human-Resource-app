@@ -25,6 +25,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
+    private static final String DEFAULT_ROLE_NAME = "STAFF";
+
     private final AuthenticationManager authenticationManager;
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtService jwtService;
@@ -61,24 +63,23 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("Email already exists");
         }
 
-        Role staffRole = roleRepository.findByName("STAFF")
-                .orElseGet(() -> {
-                    Role newRole = new Role();
-                    newRole.setName("STAFF");
-                    newRole.setDescription("Default Staff Role");
-                    Role savedRole = roleRepository.save(newRole);
-                    return savedRole != null ? savedRole : newRole;
-                });
+        Role defaultRole = roleRepository.findByName(DEFAULT_ROLE_NAME)
+                .orElseGet(() -> roleRepository.save(
+                        Role.builder()
+                                .name(DEFAULT_ROLE_NAME)
+                                .description("Default staff role")
+                                .build()
+                ));
 
         User user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .enabled(true)
-                .roles(Set.of(staffRole))
+                .roles(Set.of(defaultRole))
                 .build();
 
-        user = userRepository.save(user);
+        userRepository.save(user);
 
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(user.getUsername());
         String token = jwtService.generateToken(userDetails);
