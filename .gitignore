@@ -36,6 +36,7 @@ build/
 src/main/resources/application*.yml
 src/main/resources/application*.yaml
 src/main/resources/application*.properties
+src/main/resources/google/hr-system-storage-f1cb3206343c.json
 
 # BUT keep example file
 !src/main/resources/application-example.yaml

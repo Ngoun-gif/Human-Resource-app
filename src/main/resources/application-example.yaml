@@ -43,3 +43,9 @@ logging:
     "[org.hibernate.orm.jdbc.bind]": TRACE
   pattern:
     console: "%clr(%d{HH:mm:ss}){faint} %clr(%5p) %clr(%logger{36}){cyan} - %m%n"
+
+google:
+  credentials:
+    path: google/credentials.json
+  drive:
+    folder-id: 1E6KTxTn_V0-dv1NXXU0JIvVB2_lxxxxxxx
