@@ -4,6 +4,10 @@ server:
 spring:
   application:
     name: hr-management-system
+  
+  jackson:
+    time-zone: Asia/Phnom_Penh
+
 
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres

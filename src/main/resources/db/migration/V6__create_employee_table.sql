@@ -12,6 +12,7 @@ CREATE TABLE employee (
     phone VARCHAR(20),
     address TEXT,
     photo_url VARCHAR(500),
+    photo_file_id VARCHAR(255),
 
     department_id BIGINT,
     position_id BIGINT,
@@ -20,10 +21,10 @@ CREATE TABLE employee (
     salary DECIMAL(15,2),
     status VARCHAR(20) NOT NULL,
 
-    created_by VARCHAR(100),
-    updated_by VARCHAR(100),
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
+    created_by VARCHAR(50) NOT NULL,
+    updated_by VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL,
 
     CONSTRAINT fk_employee_department
         FOREIGN KEY (department_id)

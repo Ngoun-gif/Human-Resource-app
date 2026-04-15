@@ -3,10 +3,13 @@ package com.hr.management.system.modules.employee.dto.request;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.hr.management.system.modules.employee.enums.EmployeeStatus;
+
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -57,7 +60,6 @@ public class EmployeeRequest {
     @Digits(integer = 13, fraction = 2, message = "Salary format is invalid")
     private BigDecimal salary;
 
-    @NotBlank(message = "Status is required")
-    @Size(max = 20, message = "Status must not exceed 20 characters")
-    private String status;
+    @NotNull(message = "Status is required")
+    private EmployeeStatus status;
 }

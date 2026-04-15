@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.hr.management.system.modules.employee.enums.EmployeeStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,18 +20,14 @@ import lombok.Setter;
 public class EmployeeResponse {
 
     private Long id;
-
     private String employeeCode;
-
     private String firstName;
     private String lastName;
     private String gender;
     private LocalDate dateOfBirth;
-
     private String email;
     private String phone;
     private String address;
-
     private String photoUrl;
 
     private Long departmentId;
@@ -40,11 +38,10 @@ public class EmployeeResponse {
 
     private LocalDate hireDate;
     private BigDecimal salary;
-
-    private String status;
+    private EmployeeStatus status;
 
     private String createdBy;
-    private LocalDateTime createdAt;   // ✅ fixed
+    private LocalDateTime createdAt;
     private String updatedBy;
-    private LocalDateTime updatedAt;   // ✅ fixed
+    private LocalDateTime updatedAt;
 }

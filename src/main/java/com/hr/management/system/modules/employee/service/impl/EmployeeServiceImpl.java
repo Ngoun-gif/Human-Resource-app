@@ -37,6 +37,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeResponse create(EmployeeRequest request) {
         validateEmployeeCodeForCreate(request.getEmployeeCode());
+        validateEmailForCreate(request.getEmail());
 
         Department department = getDepartment(request.getDepartmentId());
         Position position = getPosition(request.getPositionId());
@@ -49,7 +50,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .lastName(request.getLastName())
                 .gender(request.getGender())
                 .dateOfBirth(request.getDateOfBirth())
-                .email(request.getEmail())
+                .email(normalizeEmail(request.getEmail()))
                 .phone(request.getPhone())
                 .address(request.getAddress())
                 .department(department)
@@ -62,7 +63,10 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .build();
 
         Employee savedEmployee = employeeRepository.save(employee);
-        return mapToResponse(savedEmployee);
+        Employee fetchedEmployee = employeeRepository.findWithDepartmentAndPositionById(savedEmployee.getId())
+                .orElse(savedEmployee);
+
+        return mapToResponse(fetchedEmployee);
     }
 
     @Override
@@ -71,6 +75,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + id));
 
         validateEmployeeCodeForUpdate(request.getEmployeeCode(), id);
+        validateEmailForUpdate(request.getEmail(), id);
 
         Department department = getDepartment(request.getDepartmentId());
         Position position = getPosition(request.getPositionId());
@@ -80,7 +85,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setLastName(request.getLastName());
         employee.setGender(request.getGender());
         employee.setDateOfBirth(request.getDateOfBirth());
-        employee.setEmail(request.getEmail());
+        employee.setEmail(normalizeEmail(request.getEmail()));
         employee.setPhone(request.getPhone());
         employee.setAddress(request.getAddress());
         employee.setDepartment(department);
@@ -91,12 +96,15 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setUpdatedBy(SecurityUtils.getCurrentUsername());
 
         Employee updatedEmployee = employeeRepository.save(employee);
-        return mapToResponse(updatedEmployee);
+        Employee fetchedEmployee = employeeRepository.findWithDepartmentAndPositionById(updatedEmployee.getId())
+                .orElse(updatedEmployee);
+
+        return mapToResponse(fetchedEmployee);
     }
 
     @Override
     public EmployeeResponse getById(Long id) {
-        Employee employee = employeeRepository.findById(id)
+        Employee employee = employeeRepository.findWithDepartmentAndPositionById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + id));
 
         return mapToResponse(employee);
@@ -128,6 +136,27 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    public EmployeeResponse uploadPhoto(Long id, MultipartFile file) throws IOException {
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + id));
+
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("Photo file is required");
+        }
+
+        String photoUrl = googleDriveService.uploadEmployeePhoto(file, employee.getEmployeeCode());
+
+        employee.setPhotoUrl(photoUrl);
+        employee.setUpdatedBy(SecurityUtils.getCurrentUsername());
+
+        Employee updatedEmployee = employeeRepository.save(employee);
+        Employee fetchedEmployee = employeeRepository.findWithDepartmentAndPositionById(updatedEmployee.getId())
+                .orElse(updatedEmployee);
+
+        return mapToResponse(fetchedEmployee);
+    }
+
+    @Override
     public void delete(Long id) {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + id));
@@ -153,6 +182,26 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (employeeRepository.existsByEmployeeCodeAndIdNot(employeeCode, id)) {
             throw new IllegalArgumentException("Employee code already exists");
         }
+    }
+
+    private void validateEmailForCreate(String email) {
+        String normalizedEmail = normalizeEmail(email);
+
+        if (StringUtils.hasText(normalizedEmail) && employeeRepository.existsByEmail(normalizedEmail)) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+    }
+
+    private void validateEmailForUpdate(String email, Long id) {
+        String normalizedEmail = normalizeEmail(email);
+
+        if (StringUtils.hasText(normalizedEmail) && employeeRepository.existsByEmailAndIdNot(normalizedEmail, id)) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+    }
+
+    private String normalizeEmail(String email) {
+        return StringUtils.hasText(email) ? email.trim().toLowerCase() : null;
     }
 
     private Department getDepartment(Long departmentId) {
@@ -198,17 +247,4 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .updatedAt(employee.getUpdatedAt())
                 .build();
     }
-    @Override
-    public EmployeeResponse uploadPhoto(Long id, MultipartFile file) throws IOException {
-        Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + id));
-
-        String photoUrl = googleDriveService.uploadEmployeePhoto(file, employee.getEmployeeCode());
-
-        employee.setPhotoUrl(photoUrl);
-        employee.setUpdatedBy(SecurityUtils.getCurrentUsername());
-
-        Employee updatedEmployee = employeeRepository.save(employee);
-        return mapToResponse(updatedEmployee);
-}
 }

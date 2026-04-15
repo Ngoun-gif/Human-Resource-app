@@ -62,7 +62,7 @@ public class User {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
     @Column(name = "created_by", length = 50, updatable = false)
@@ -96,6 +96,10 @@ public class User {
 
         if (this.updatedBy == null || this.updatedBy.isBlank()) {
             this.updatedBy = this.createdBy;
+        }
+
+        if (this.enabled == null) {
+            this.enabled = true;
         }
     }
 
