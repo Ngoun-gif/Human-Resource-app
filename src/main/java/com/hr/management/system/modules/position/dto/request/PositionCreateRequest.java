@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PositionRequest {
+public class PositionCreateRequest {
 
     @NotBlank(message = "Position code is required")
     @Size(max = 50, message = "Position code must not exceed 50 characters")
@@ -20,5 +20,5 @@ public class PositionRequest {
     @Size(max = 255, message = "Description must not exceed 255 characters")
     private String description;
 
-    private Boolean status;
+    private Boolean status; // optional (default true in service)
 }

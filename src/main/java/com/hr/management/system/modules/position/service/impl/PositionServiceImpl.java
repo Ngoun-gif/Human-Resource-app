@@ -9,7 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.hr.management.system.common.dto.PageResponse;
-import com.hr.management.system.modules.position.dto.request.PositionRequest;
+import com.hr.management.system.modules.position.dto.request.PositionCreateRequest;
+import com.hr.management.system.modules.position.dto.request.PositionUpdateRequest;
 import com.hr.management.system.modules.position.dto.response.PositionResponse;
 import com.hr.management.system.modules.position.entity.Position;
 import com.hr.management.system.modules.position.repository.PositionRepository;
@@ -25,18 +26,21 @@ public class PositionServiceImpl implements PositionService {
     private final PositionRepository positionRepository;
 
     @Override
-    public PositionResponse create(PositionRequest request) {
-        if (positionRepository.existsByCode(request.getCode())) {
+    public PositionResponse create(PositionCreateRequest request) {
+        String code = normalizeCode(request.getCode());
+        String name = normalizeName(request.getName());
+
+        if (positionRepository.existsByCode(code)) {
             throw new RuntimeException("Position code already exists");
         }
 
         String currentUsername = getCurrentUsername();
 
         Position position = Position.builder()
-                .code(request.getCode().trim())
-                .name(request.getName().trim())
-                .description(request.getDescription())
-                .status(Boolean.TRUE.equals(request.getStatus()))
+                .code(code)
+                .name(name)
+                .description(normalizeDescription(request.getDescription()))
+                .status(request.getStatus() != null ? request.getStatus() : true)
                 .createdBy(currentUsername)
                 .updatedBy(currentUsername)
                 .build();
@@ -46,17 +50,20 @@ public class PositionServiceImpl implements PositionService {
     }
 
     @Override
-    public PositionResponse update(Long id, PositionRequest request) {
+    public PositionResponse update(Long id, PositionUpdateRequest request) {
         Position position = positionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Position not found with id: " + id));
 
-        if (positionRepository.existsByCodeAndIdNot(request.getCode(), id)) {
+        String code = normalizeCode(request.getCode());
+        String name = normalizeName(request.getName());
+
+        if (positionRepository.existsByCodeAndIdNot(code, id)) {
             throw new RuntimeException("Position code already exists");
         }
 
-        position.setCode(request.getCode().trim());
-        position.setName(request.getName().trim());
-        position.setDescription(request.getDescription());
+        position.setCode(code);
+        position.setName(name);
+        position.setDescription(normalizeDescription(request.getDescription()));
         position.setStatus(request.getStatus() != null ? request.getStatus() : position.getStatus());
         position.setUpdatedBy(getCurrentUsername());
 
@@ -88,8 +95,9 @@ public class PositionServiceImpl implements PositionService {
         Page<Position> positionPage;
 
         if (search != null && !search.isBlank()) {
+            String keyword = search.trim();
             positionPage = positionRepository
-                    .findByNameContainingIgnoreCaseOrCodeContainingIgnoreCase(search, search, pageable);
+                    .findByNameContainingIgnoreCaseOrCodeContainingIgnoreCase(keyword, keyword, pageable);
         } else {
             positionPage = positionRepository.findAll(pageable);
         }
@@ -127,5 +135,20 @@ public class PositionServiceImpl implements PositionService {
         }
 
         return authentication.getName();
+    }
+
+    private String normalizeCode(String value) {
+        return value == null ? null : value.trim();
+    }
+
+    private String normalizeName(String value) {
+        return value == null ? null : value.trim();
+    }
+
+    private String normalizeDescription(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        return value.trim();
     }
 }

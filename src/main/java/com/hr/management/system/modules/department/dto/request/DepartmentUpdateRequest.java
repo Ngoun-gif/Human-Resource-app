@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class DepartmentRequest {
+public class DepartmentUpdateRequest {
 
     @NotBlank(message = "Department name is required")
     @Size(max = 100, message = "Department name must not exceed 100 characters")

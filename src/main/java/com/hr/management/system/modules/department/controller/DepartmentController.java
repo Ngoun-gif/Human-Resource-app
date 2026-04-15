@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hr.management.system.common.dto.PageResponse;
-import com.hr.management.system.modules.department.dto.request.DepartmentRequest;
+import com.hr.management.system.modules.department.dto.request.DepartmentCreateRequest;
+import com.hr.management.system.modules.department.dto.request.DepartmentUpdateRequest;
 import com.hr.management.system.modules.department.dto.response.DepartmentResponse;
 import com.hr.management.system.modules.department.service.DepartmentService;
 
@@ -30,7 +31,7 @@ public class DepartmentController {
 
     @PostMapping
     public ResponseEntity<DepartmentResponse> create(
-            @Valid @RequestBody DepartmentRequest request,
+            @Valid @RequestBody DepartmentCreateRequest request,
             Authentication authentication
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -40,7 +41,7 @@ public class DepartmentController {
     @PutMapping("/{id}")
     public ResponseEntity<DepartmentResponse> update(
             @PathVariable Long id,
-            @Valid @RequestBody DepartmentRequest request,
+            @Valid @RequestBody DepartmentUpdateRequest request,
             Authentication authentication
     ) {
         return ResponseEntity.ok(departmentService.update(id, request, authentication.getName()));

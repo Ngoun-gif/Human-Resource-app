@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hr.management.system.common.dto.PageResponse;
-import com.hr.management.system.modules.position.dto.request.PositionRequest;
+import com.hr.management.system.modules.position.dto.request.PositionCreateRequest;
+import com.hr.management.system.modules.position.dto.request.PositionUpdateRequest;
 import com.hr.management.system.modules.position.dto.response.PositionResponse;
 import com.hr.management.system.modules.position.service.PositionService;
 
@@ -28,14 +29,14 @@ public class PositionController {
     private final PositionService positionService;
 
     @PostMapping
-    public ResponseEntity<PositionResponse> create(@Valid @RequestBody PositionRequest request) {
+    public ResponseEntity<PositionResponse> create(@Valid @RequestBody PositionCreateRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(positionService.create(request));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<PositionResponse> update(
             @PathVariable Long id,
-            @Valid @RequestBody PositionRequest request) {
+            @Valid @RequestBody PositionUpdateRequest request) {
         return ResponseEntity.ok(positionService.update(id, request));
     }
 

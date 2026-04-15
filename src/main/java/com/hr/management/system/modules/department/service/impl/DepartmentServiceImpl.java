@@ -6,7 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.hr.management.system.common.dto.PageResponse;
-import com.hr.management.system.modules.department.dto.request.DepartmentRequest;
+import com.hr.management.system.modules.department.dto.request.DepartmentCreateRequest;
+import com.hr.management.system.modules.department.dto.request.DepartmentUpdateRequest;
 import com.hr.management.system.modules.department.dto.response.DepartmentResponse;
 import com.hr.management.system.modules.department.entity.Department;
 import com.hr.management.system.modules.department.repository.DepartmentRepository;
@@ -22,7 +23,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     private final DepartmentRepository departmentRepository;
 
     @Override
-    public DepartmentResponse create(DepartmentRequest request, String currentUsername) {
+    public DepartmentResponse create(DepartmentCreateRequest request, String currentUsername) {
         String departmentName = normalizeName(request.getName());
 
         if (departmentRepository.existsByName(departmentName)) {
@@ -42,7 +43,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public DepartmentResponse update(Long id, DepartmentRequest request, String currentUsername) {
+    public DepartmentResponse update(Long id, DepartmentUpdateRequest request, String currentUsername) {
         Department department = departmentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Department not found with id: " + id));
 
