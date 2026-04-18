@@ -1,4 +1,4 @@
-package com.hr.management.system.modules.leavetype.dto;
+package com.hr.management.system.modules.leavetype.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
