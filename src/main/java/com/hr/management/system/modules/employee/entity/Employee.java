@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import com.hr.management.system.modules.department.entity.Department;
 import com.hr.management.system.modules.employee.enums.EmployeeGender;
 import com.hr.management.system.modules.employee.enums.EmployeeStatus;
-import com.hr.management.system.modules.employeetype.entity.EmployeeType;
+import com.hr.management.system.modules.employee_type.entity.EmployeeType;
 import com.hr.management.system.modules.position.entity.Position;
 import com.hr.management.system.modules.user.entity.User;
 

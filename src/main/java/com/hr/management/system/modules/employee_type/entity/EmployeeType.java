@@ -1,4 +1,4 @@
-package com.hr.management.system.modules.employeetype.entity;
+package com.hr.management.system.modules.employee_type.entity;
 
 import java.time.LocalDateTime;
 

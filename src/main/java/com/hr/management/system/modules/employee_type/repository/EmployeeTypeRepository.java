@@ -1,4 +1,4 @@
-package com.hr.management.system.modules.employeetype.repository;
+package com.hr.management.system.modules.employee_type.repository;
 
 import java.util.Optional;
 
@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.hr.management.system.modules.employeetype.entity.EmployeeType;
+import com.hr.management.system.modules.employee_type.entity.EmployeeType;
 
 public interface EmployeeTypeRepository extends JpaRepository<EmployeeType, Long> {
 

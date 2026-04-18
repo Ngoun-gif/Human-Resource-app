@@ -1,4 +1,4 @@
-package com.hr.management.system.modules.employeetype.service.impl;
+package com.hr.management.system.modules.employee_type.service.impl;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -6,12 +6,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.hr.management.system.common.dto.PageResponse;
-import com.hr.management.system.modules.employeetype.dto.CreateEmployeeTypeRequest;
-import com.hr.management.system.modules.employeetype.dto.EmployeeTypeResponse;
-import com.hr.management.system.modules.employeetype.dto.UpdateEmployeeTypeRequest;
-import com.hr.management.system.modules.employeetype.entity.EmployeeType;
-import com.hr.management.system.modules.employeetype.repository.EmployeeTypeRepository;
-import com.hr.management.system.modules.employeetype.service.EmployeeTypeService;
+import com.hr.management.system.modules.employee_type.dto.CreateEmployeeTypeRequest;
+import com.hr.management.system.modules.employee_type.dto.EmployeeTypeResponse;
+import com.hr.management.system.modules.employee_type.dto.UpdateEmployeeTypeRequest;
+import com.hr.management.system.modules.employee_type.entity.EmployeeType;
+import com.hr.management.system.modules.employee_type.repository.EmployeeTypeRepository;
+import com.hr.management.system.modules.employee_type.service.EmployeeTypeService;
 import com.hr.management.system.utils.SecurityUtils;
 
 import jakarta.persistence.EntityNotFoundException;

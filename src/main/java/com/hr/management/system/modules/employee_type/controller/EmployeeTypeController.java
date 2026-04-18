@@ -1,4 +1,4 @@
-package com.hr.management.system.modules.employeetype.controller;
+package com.hr.management.system.modules.employee_type.controller;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hr.management.system.common.dto.PageResponse;
-import com.hr.management.system.modules.employeetype.dto.CreateEmployeeTypeRequest;
-import com.hr.management.system.modules.employeetype.dto.EmployeeTypeResponse;
-import com.hr.management.system.modules.employeetype.dto.UpdateEmployeeTypeRequest;
-import com.hr.management.system.modules.employeetype.service.EmployeeTypeService;
+import com.hr.management.system.modules.employee_type.dto.CreateEmployeeTypeRequest;
+import com.hr.management.system.modules.employee_type.dto.EmployeeTypeResponse;
+import com.hr.management.system.modules.employee_type.dto.UpdateEmployeeTypeRequest;
+import com.hr.management.system.modules.employee_type.service.EmployeeTypeService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

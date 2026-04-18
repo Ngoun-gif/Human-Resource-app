@@ -1,4 +1,4 @@
-package com.hr.management.system.modules.employeetype.dto;
+package com.hr.management.system.modules.employee_type.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
