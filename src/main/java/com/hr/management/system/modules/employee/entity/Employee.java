@@ -1,12 +1,14 @@
 package com.hr.management.system.modules.employee.entity;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.hr.management.system.modules.department.entity.Department;
+import com.hr.management.system.modules.employee.enums.EmployeeGender;
 import com.hr.management.system.modules.employee.enums.EmployeeStatus;
+import com.hr.management.system.modules.employeetype.entity.EmployeeType;
 import com.hr.management.system.modules.position.entity.Position;
+import com.hr.management.system.modules.user.entity.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,7 +30,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "employee")
+@Table(name = "employees")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -40,74 +42,64 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "employee_code", nullable = false, unique = true, length = 20)
+    @Column(nullable = false, unique = true, length = 50)
     private String employeeCode;
 
-    @Column(name = "first_name", nullable = false, length = 100)
+    @Column(nullable = false, length = 100)
     private String firstName;
 
-    @Column(name = "last_name", nullable = false, length = 100)
+    @Column(nullable = false, length = 100)
     private String lastName;
 
-    @Column(name = "gender", length = 20)
-    private String gender;
-
-    @Column(name = "date_of_birth")
-    private LocalDate dateOfBirth;
-
-    @Column(name = "email", length = 150)
+    @Column(nullable = false, unique = true, length = 150)
     private String email;
 
-    @Column(name = "phone", length = 20)
+    @Column(length = 30)
     private String phone;
 
-    @Column(name = "address", columnDefinition = "TEXT")
-    private String address;
+    @Column(nullable = false)
+    private LocalDate hireDate;
 
-    @Column(name = "photo_url", length = 500)
-    private String photoUrl;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private EmployeeGender gender;
 
-    @Column(name = "photo_file_id", length = 255)
-    private String photoFileId;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private EmployeeStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "department_id")
+    @JoinColumn(name = "department_id", nullable = false)
     private Department department;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "position_id")
+    @JoinColumn(name = "position_id", nullable = false)
     private Position position;
 
-    @Column(name = "hire_date")
-    private LocalDate hireDate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_type_id", nullable = false)
+    private EmployeeType employeeType;
 
-    @Column(name = "salary", precision = 15, scale = 2)
-    private BigDecimal salary;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, length = 20)
-    private EmployeeStatus status;
-
-    @Column(name = "created_by", length = 100, updatable = false)
+    @Column(nullable = false, length = 100)
     private String createdBy;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_by", length = 100)
+    @Column(nullable = false, length = 100)
     private String updatedBy;
 
-    @Column(name = "updated_at", nullable = false)
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
     private LocalDateTime updatedAt;
 
     @PrePersist
     public void prePersist() {
         LocalDateTime now = LocalDateTime.now();
-
-        if (this.createdAt == null) {
-            this.createdAt = now;
-        }
-
+        this.createdAt = now;
         this.updatedAt = now;
 
         if (this.createdBy == null || this.createdBy.isBlank()) {

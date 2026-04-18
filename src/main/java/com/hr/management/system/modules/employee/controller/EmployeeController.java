@@ -1,15 +1,12 @@
 package com.hr.management.system.modules.employee.controller;
 
-import java.io.IOException;
-
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.hr.management.system.common.dto.PageResponse;
-import com.hr.management.system.modules.employee.dto.request.EmployeeRequest;
+import com.hr.management.system.modules.employee.dto.request.CreateEmployeeRequest;
+import com.hr.management.system.modules.employee.dto.request.UpdateEmployeeRequest;
 import com.hr.management.system.modules.employee.dto.response.EmployeeResponse;
 import com.hr.management.system.modules.employee.service.EmployeeService;
 
@@ -24,14 +21,14 @@ public class EmployeeController {
     private final EmployeeService employeeService;
 
     @PostMapping
-    public ResponseEntity<EmployeeResponse> create(@Valid @RequestBody EmployeeRequest request) {
+    public ResponseEntity<EmployeeResponse> create(@Valid @RequestBody CreateEmployeeRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(employeeService.create(request));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<EmployeeResponse> update(
             @PathVariable Long id,
-            @Valid @RequestBody EmployeeRequest request
+            @Valid @RequestBody UpdateEmployeeRequest request
     ) {
         return ResponseEntity.ok(employeeService.update(id, request));
     }
@@ -43,24 +40,16 @@ public class EmployeeController {
 
     @GetMapping
     public ResponseEntity<PageResponse<EmployeeResponse>> getAll(
+            @RequestParam(required = false) String search,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String search
+            @RequestParam(defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok(employeeService.getAll(page, size, search));
+        return ResponseEntity.ok(employeeService.getAll(search, page, size));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<String> delete(@PathVariable Long id) {
         employeeService.delete(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping(value = "/{id}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<EmployeeResponse> uploadPhoto(
-            @PathVariable Long id,
-            @RequestPart("file") MultipartFile file
-    ) throws IOException {
-        return ResponseEntity.ok(employeeService.uploadPhoto(id, file));
+        return ResponseEntity.ok("Employee deleted successfully");
     }
 }

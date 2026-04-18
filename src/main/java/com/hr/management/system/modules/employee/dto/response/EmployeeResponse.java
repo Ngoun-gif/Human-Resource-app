@@ -1,9 +1,9 @@
 package com.hr.management.system.modules.employee.dto.response;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.hr.management.system.modules.employee.enums.EmployeeGender;
 import com.hr.management.system.modules.employee.enums.EmployeeStatus;
 
 import lombok.AllArgsConstructor;
@@ -23,12 +23,11 @@ public class EmployeeResponse {
     private String employeeCode;
     private String firstName;
     private String lastName;
-    private String gender;
-    private LocalDate dateOfBirth;
     private String email;
     private String phone;
-    private String address;
-    private String photoUrl;
+    private LocalDate hireDate;
+    private EmployeeGender gender;
+    private EmployeeStatus status;
 
     private Long departmentId;
     private String departmentName;
@@ -36,12 +35,14 @@ public class EmployeeResponse {
     private Long positionId;
     private String positionName;
 
-    private LocalDate hireDate;
-    private BigDecimal salary;
-    private EmployeeStatus status;
+    private Long employeeTypeId;
+    private String employeeTypeName;
+
+    private Long userId;
+    private String username;
 
     private String createdBy;
-    private LocalDateTime createdAt;
     private String updatedBy;
+    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
