@@ -1,4 +1,4 @@
-package com.hr.management.system.modules.leavetype.repository;
+package com.hr.management.system.modules.leave_type.repository;
 
 import java.util.Optional;
 
@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.hr.management.system.modules.leavetype.entity.LeaveType;
+import com.hr.management.system.modules.leave_type.entity.LeaveType;
 
 public interface LeaveTypeRepository extends JpaRepository<LeaveType, Long> {
 

@@ -4,6 +4,6 @@ CREATE TABLE leave_types (
     description VARCHAR(255),
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
-    created_by VARCHAR(100) NOT NULL,
-    updated_by VARCHAR(100) NOT NULL
+    created_by VARCHAR(50) NOT NULL,
+    updated_by VARCHAR(50) NOT NULL
 );

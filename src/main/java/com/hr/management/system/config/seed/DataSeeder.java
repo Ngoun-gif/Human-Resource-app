@@ -1,5 +1,6 @@
 package com.hr.management.system.config.seed;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -9,6 +10,14 @@ import org.springframework.stereotype.Component;
 
 import com.hr.management.system.modules.department.entity.Department;
 import com.hr.management.system.modules.department.repository.DepartmentRepository;
+import com.hr.management.system.modules.employee.entity.Employee;
+import com.hr.management.system.modules.employee.enums.EmployeeGender;
+import com.hr.management.system.modules.employee.enums.EmployeeStatus;
+import com.hr.management.system.modules.employee.repository.EmployeeRepository;
+import com.hr.management.system.modules.employee_type.entity.EmployeeType;
+import com.hr.management.system.modules.employee_type.repository.EmployeeTypeRepository;
+import com.hr.management.system.modules.leave_type.entity.LeaveType;
+import com.hr.management.system.modules.leave_type.repository.LeaveTypeRepository;
 import com.hr.management.system.modules.position.entity.Position;
 import com.hr.management.system.modules.position.repository.PositionRepository;
 import com.hr.management.system.modules.role.entity.Role;
@@ -26,6 +35,9 @@ public class DataSeeder implements CommandLineRunner {
     private final UserRepository userRepository;
     private final DepartmentRepository departmentRepository;
     private final PositionRepository positionRepository;
+    private final EmployeeTypeRepository employeeTypeRepository;
+    private final LeaveTypeRepository leaveTypeRepository;
+    private final EmployeeRepository employeeRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -39,14 +51,67 @@ public class DataSeeder implements CommandLineRunner {
         seedAdminUser(adminRole);
 
         // 3. Departments
-        seedDepartment("HR", "Human Resources");
-        seedDepartment("IT", "Information Technology");
-        seedDepartment("FINANCE", "Finance Department");
+        Department hrDepartment = seedDepartment("HR", "Human Resources");
+        Department itDepartment = seedDepartment("IT", "Information Technology");
+        Department financeDepartment = seedDepartment("FINANCE", "Finance Department");
 
         // 4. Positions
-        seedPosition("MGR", "Manager", "Management role");
-        seedPosition("OFF", "Officer", "Operational role");
-        seedPosition("STAFF", "Staff", "General staff role");
+        Position managerPosition = seedPosition("MGR", "Manager", "Management role");
+        Position officerPosition = seedPosition("OFF", "Officer", "Operational role");
+        Position staffPosition = seedPosition("STAFF", "Staff", "General staff role");
+
+        // 5. Employee Types
+        EmployeeType fullTimeType = seedEmployeeType("FULL_TIME", "Full Time Employee");
+        EmployeeType internType = seedEmployeeType("INTERN", "Intern");
+
+        // 6. Leave Types
+        seedLeaveType("ANNUAL", "Annual Leave");
+        seedLeaveType("SICK", "Sick Leave");
+        seedLeaveType("UNPAID", "Unpaid Leave");
+        seedLeaveType("MATERNITY", "Maternity Leave");
+
+        // 7. Employees
+        seedEmployee(
+                "EMP001",
+                "Sok",
+                "Dara",
+                "sok.dara@hr.local",
+                "012111111",
+                LocalDate.of(2024, 1, 10),
+                EmployeeGender.MALE,
+                EmployeeStatus.ACTIVE,
+                hrDepartment,
+                officerPosition,
+                fullTimeType
+        );
+
+        seedEmployee(
+                "EMP002",
+                "Srey",
+                "Pich",
+                "srey.pich@hr.local",
+                "012222222",
+                LocalDate.of(2024, 3, 5),
+                EmployeeGender.FEMALE,
+                EmployeeStatus.ACTIVE,
+                itDepartment,
+                staffPosition,
+                fullTimeType
+        );
+
+        seedEmployee(
+                "EMP003",
+                "Nary",
+                "Chan",
+                "nary.chan@hr.local",
+                "012333333",
+                LocalDate.of(2025, 6, 1),
+                EmployeeGender.FEMALE,
+                EmployeeStatus.ACTIVE,
+                financeDepartment,
+                managerPosition,
+                internType
+        );
 
         System.out.println("✅ Base data seeded");
     }
@@ -161,8 +226,8 @@ public class DataSeeder implements CommandLineRunner {
     // =========================
     // DEPARTMENT
     // =========================
-    private void seedDepartment(String name, String description) {
-        departmentRepository.findByName(name).orElseGet(() -> {
+    private Department seedDepartment(String name, String description) {
+        return departmentRepository.findByName(name).orElseGet(() -> {
             Department dept = Department.builder()
                     .name(name)
                     .description(description)
@@ -180,8 +245,8 @@ public class DataSeeder implements CommandLineRunner {
     // =========================
     // POSITION
     // =========================
-    private void seedPosition(String code, String name, String description) {
-        positionRepository.findByCode(code).orElseGet(() -> {
+    private Position seedPosition(String code, String name, String description) {
+        return positionRepository.findByCode(code).orElseGet(() -> {
             Position pos = Position.builder()
                     .code(code)
                     .name(name)
@@ -195,6 +260,85 @@ public class DataSeeder implements CommandLineRunner {
 
             System.out.println("✅ Position created: " + name);
             return positionRepository.save(pos);
+        });
+    }
+
+    // =========================
+    // EMPLOYEE TYPE
+    // =========================
+    private EmployeeType seedEmployeeType(String name, String description) {
+        return employeeTypeRepository.findByName(name).orElseGet(() -> {
+            EmployeeType employeeType = EmployeeType.builder()
+                    .name(name)
+                    .description(description)
+                    .createdBy("SYSTEM")
+                    .updatedBy("SYSTEM")
+                    .createdAt(LocalDateTime.now())
+                    .updatedAt(LocalDateTime.now())
+                    .build();
+
+            System.out.println("✅ EmployeeType created: " + name);
+            return employeeTypeRepository.save(employeeType);
+        });
+    }
+
+    // =========================
+    // LEAVE TYPE
+    // =========================
+    private LeaveType seedLeaveType(String name, String description) {
+        return leaveTypeRepository.findByName(name).orElseGet(() -> {
+            LeaveType leaveType = LeaveType.builder()
+                    .name(name)
+                    .description(description)
+                    .createdBy("SYSTEM")
+                    .updatedBy("SYSTEM")
+                    .createdAt(LocalDateTime.now())
+                    .updatedAt(LocalDateTime.now())
+                    .build();
+
+            System.out.println("✅ LeaveType created: " + name);
+            return leaveTypeRepository.save(leaveType);
+        });
+    }
+
+    // =========================
+    // EMPLOYEE
+    // =========================
+    private Employee seedEmployee(
+            String employeeCode,
+            String firstName,
+            String lastName,
+            String email,
+            String phone,
+            LocalDate hireDate,
+            EmployeeGender gender,
+            EmployeeStatus status,
+            Department department,
+            Position position,
+            EmployeeType employeeType
+    ) {
+        return employeeRepository.findByEmployeeCode(employeeCode).orElseGet(() -> {
+            Employee employee = Employee.builder()
+                    .employeeCode(employeeCode)
+                    .firstName(firstName)
+                    .lastName(lastName)
+                    .email(email)
+                    .phone(phone)
+                    .hireDate(hireDate)
+                    .gender(gender)
+                    .status(status)
+                    .department(department)
+                    .position(position)
+                    .employeeType(employeeType)
+                    .user(null)
+                    .createdBy("SYSTEM")
+                    .updatedBy("SYSTEM")
+                    .createdAt(LocalDateTime.now())
+                    .updatedAt(LocalDateTime.now())
+                    .build();
+
+            System.out.println("✅ Employee created: " + employeeCode + " - " + firstName + " " + lastName);
+            return employeeRepository.save(employee);
         });
     }
 }

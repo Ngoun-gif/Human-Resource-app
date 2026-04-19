@@ -1,4 +1,4 @@
-package com.hr.management.system.modules.leavetype.controller;
+package com.hr.management.system.modules.leave_type.controller;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hr.management.system.common.dto.PageResponse;
-import com.hr.management.system.modules.leavetype.dto.LeaveTypeResponse;
-import com.hr.management.system.modules.leavetype.dto.request.CreateLeaveTypeRequest;
-import com.hr.management.system.modules.leavetype.dto.request.UpdateLeaveTypeRequest;
-import com.hr.management.system.modules.leavetype.service.LeaveTypeService;
+import com.hr.management.system.modules.leave_type.dto.LeaveTypeResponse;
+import com.hr.management.system.modules.leave_type.dto.request.CreateLeaveTypeRequest;
+import com.hr.management.system.modules.leave_type.dto.request.UpdateLeaveTypeRequest;
+import com.hr.management.system.modules.leave_type.service.LeaveTypeService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

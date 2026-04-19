@@ -1,9 +1,9 @@
-package com.hr.management.system.modules.leavetype.service;
+package com.hr.management.system.modules.leave_type.service;
 
 import com.hr.management.system.common.dto.PageResponse;
-import com.hr.management.system.modules.leavetype.dto.request.CreateLeaveTypeRequest;
-import com.hr.management.system.modules.leavetype.dto.LeaveTypeResponse;
-import com.hr.management.system.modules.leavetype.dto.request.UpdateLeaveTypeRequest;
+import com.hr.management.system.modules.leave_type.dto.request.CreateLeaveTypeRequest;
+import com.hr.management.system.modules.leave_type.dto.LeaveTypeResponse;
+import com.hr.management.system.modules.leave_type.dto.request.UpdateLeaveTypeRequest;
 
 public interface LeaveTypeService {
 

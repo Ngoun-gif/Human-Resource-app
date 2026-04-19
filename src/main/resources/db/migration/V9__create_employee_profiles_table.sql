@@ -13,10 +13,12 @@ CREATE TABLE employee_profiles (
     emergency_contact_phone VARCHAR(30),
     notes VARCHAR(500),
 
-    created_by VARCHAR(100) NOT NULL,
-    updated_by VARCHAR(100) NOT NULL,
+
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
+
+    created_by VARCHAR(50) NOT NULL,
+    updated_by VARCHAR(50) NOT NULL,
 
     CONSTRAINT fk_employee_profiles_employee
     FOREIGN KEY (employee_id)

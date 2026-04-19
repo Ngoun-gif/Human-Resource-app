@@ -1,4 +1,4 @@
-package com.hr.management.system.modules.leavetype.entity;
+package com.hr.management.system.modules.leave_type.entity;
 
 import java.time.LocalDateTime;
 

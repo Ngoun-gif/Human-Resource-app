@@ -12,10 +12,12 @@ CREATE TABLE employees (
     position_id BIGINT NOT NULL,
     employee_type_id BIGINT NOT NULL,
     user_id BIGINT,
-    created_by VARCHAR(100) NOT NULL,
-    updated_by VARCHAR(100) NOT NULL,
+
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
+
+    created_by VARCHAR(50) NOT NULL,
+    updated_by VARCHAR(50) NOT NULL,
 
     CONSTRAINT fk_employees_department
     FOREIGN KEY (department_id)
