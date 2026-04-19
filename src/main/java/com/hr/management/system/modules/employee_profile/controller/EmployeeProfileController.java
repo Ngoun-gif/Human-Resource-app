@@ -1,9 +1,15 @@
 package com.hr.management.system.modules.employee_profile.controller;
 
-import org.springframework.http.HttpStatus;
+import java.io.IOException;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.hr.management.system.common.dto.PageResponse;
 import com.hr.management.system.modules.employee_profile.dto.request.CreateEmployeeProfileRequest;
 import com.hr.management.system.modules.employee_profile.dto.request.UpdateEmployeeProfileRequest;
 import com.hr.management.system.modules.employee_profile.dto.response.EmployeeProfileResponse;
@@ -19,17 +25,21 @@ public class EmployeeProfileController {
 
     private final EmployeeProfileService employeeProfileService;
 
-    @PostMapping
-    public ResponseEntity<EmployeeProfileResponse> create(@Valid @RequestBody CreateEmployeeProfileRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(employeeProfileService.create(request));
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<EmployeeProfileResponse> create(
+            @RequestPart("request") @Valid CreateEmployeeProfileRequest request,
+            @RequestPart(value = "photo", required = false) MultipartFile photo
+    ) throws IOException {
+        return ResponseEntity.ok(employeeProfileService.create(request, photo));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<EmployeeProfileResponse> update(
             @PathVariable Long id,
-            @Valid @RequestBody UpdateEmployeeProfileRequest request
-    ) {
-        return ResponseEntity.ok(employeeProfileService.update(id, request));
+            @RequestPart("request") @Valid UpdateEmployeeProfileRequest request,
+            @RequestPart(value = "photo", required = false) MultipartFile photo
+    ) throws IOException {
+        return ResponseEntity.ok(employeeProfileService.update(id, request, photo));
     }
 
     @GetMapping("/{id}")
@@ -42,9 +52,19 @@ public class EmployeeProfileController {
         return ResponseEntity.ok(employeeProfileService.getByEmployeeId(employeeId));
     }
 
+    @GetMapping
+    public ResponseEntity<PageResponse<EmployeeProfileResponse>> getAll(
+            @RequestParam(defaultValue = "") String search,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(employeeProfileService.getAll(search, pageable));
+    }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) throws IOException {
         employeeProfileService.delete(id);
-        return ResponseEntity.ok("Employee profile deleted successfully");
+        return ResponseEntity.noContent().build();
     }
 }

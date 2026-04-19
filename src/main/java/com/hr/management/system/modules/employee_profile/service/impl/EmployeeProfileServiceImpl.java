@@ -1,7 +1,15 @@
 package com.hr.management.system.modules.employee_profile.service.impl;
 
-import org.springframework.stereotype.Service;
+import java.io.IOException;
+import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.hr.management.system.common.dto.PageResponse;
 import com.hr.management.system.modules.employee.entity.Employee;
 import com.hr.management.system.modules.employee.repository.EmployeeRepository;
 import com.hr.management.system.modules.employee_profile.dto.request.CreateEmployeeProfileRequest;
@@ -10,6 +18,10 @@ import com.hr.management.system.modules.employee_profile.dto.response.EmployeePr
 import com.hr.management.system.modules.employee_profile.entity.EmployeeProfile;
 import com.hr.management.system.modules.employee_profile.repository.EmployeeProfileRepository;
 import com.hr.management.system.modules.employee_profile.service.EmployeeProfileService;
+import com.hr.management.system.service.google.GoogleDriveService;
+import com.hr.management.system.service.google.dto.GoogleDriveFileResponse;
+import com.hr.management.system.service.image.ImageOptimizationService;
+import com.hr.management.system.service.image.dto.OptimizedImageResult;
 import com.hr.management.system.utils.SecurityUtils;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -21,9 +33,11 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
 
     private final EmployeeProfileRepository employeeProfileRepository;
     private final EmployeeRepository employeeRepository;
+    private final ImageOptimizationService imageOptimizationService;
+    private final GoogleDriveService googleDriveService;
 
     @Override
-    public EmployeeProfileResponse create(CreateEmployeeProfileRequest request) {
+    public EmployeeProfileResponse create(CreateEmployeeProfileRequest request, MultipartFile photo) throws IOException {
         if (employeeProfileRepository.existsByEmployeeId(request.getEmployeeId())) {
             throw new IllegalArgumentException("Employee profile already exists for employee id: " + request.getEmployeeId());
         }
@@ -35,7 +49,6 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
 
         EmployeeProfile profile = EmployeeProfile.builder()
                 .employee(employee)
-                .photoUrl(request.getPhotoUrl())
                 .dateOfBirth(request.getDateOfBirth())
                 .address(request.getAddress())
                 .emergencyContactName(request.getEmergencyContactName())
@@ -45,21 +58,34 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
                 .updatedBy(username)
                 .build();
 
+        if (photo != null && !photo.isEmpty()) {
+            GoogleDriveFileResponse uploadedFile = uploadOptimizedPhoto(photo);
+            applyPhotoMetadata(profile, uploadedFile);
+        }
+
         return mapToResponse(employeeProfileRepository.save(profile));
     }
 
     @Override
-    public EmployeeProfileResponse update(Long id, UpdateEmployeeProfileRequest request) {
+    public EmployeeProfileResponse update(Long id, UpdateEmployeeProfileRequest request, MultipartFile photo) throws IOException {
         EmployeeProfile profile = employeeProfileRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Employee profile not found with id: " + id));
 
-        profile.setPhotoUrl(request.getPhotoUrl());
         profile.setDateOfBirth(request.getDateOfBirth());
         profile.setAddress(request.getAddress());
         profile.setEmergencyContactName(request.getEmergencyContactName());
         profile.setEmergencyContactPhone(request.getEmergencyContactPhone());
         profile.setNotes(request.getNotes());
         profile.setUpdatedBy(SecurityUtils.getCurrentUsername());
+
+        if (photo != null && !photo.isEmpty()) {
+            if (StringUtils.hasText(profile.getPhotoFileId())) {
+                googleDriveService.deleteFile(profile.getPhotoFileId());
+            }
+
+            GoogleDriveFileResponse uploadedFile = uploadOptimizedPhoto(photo);
+            applyPhotoMetadata(profile, uploadedFile);
+        }
 
         return mapToResponse(employeeProfileRepository.save(profile));
     }
@@ -81,11 +107,57 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
     }
 
     @Override
-    public void delete(Long id) {
+    public PageResponse<EmployeeProfileResponse> getAll(String search, Pageable pageable) {
+        Page<EmployeeProfile> page;
+
+        if (!StringUtils.hasText(search)) {
+            page = employeeProfileRepository.findAll(pageable);
+        } else {
+            page = employeeProfileRepository.search(search.trim(), pageable);
+        }
+
+        List<EmployeeProfileResponse> data = page.getContent()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+
+        return PageResponse.<EmployeeProfileResponse>builder()
+                .data(data)
+                .page(page.getNumber())
+                .size(page.getSize())
+                .total(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .build();
+    }
+
+    @Override
+    public void delete(Long id) throws IOException {
         EmployeeProfile profile = employeeProfileRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Employee profile not found with id: " + id));
 
+        if (StringUtils.hasText(profile.getPhotoFileId())) {
+            googleDriveService.deleteFile(profile.getPhotoFileId());
+        }
+
         employeeProfileRepository.delete(profile);
+    }
+
+    private GoogleDriveFileResponse uploadOptimizedPhoto(MultipartFile photo) throws IOException {
+        OptimizedImageResult optimized = imageOptimizationService.optimizeImage(photo);
+
+        return googleDriveService.uploadEmployeePhoto(
+                optimized.getData(),
+                optimized.getFileName(),
+                optimized.getContentType()
+        );
+    }
+
+    private void applyPhotoMetadata(EmployeeProfile profile, GoogleDriveFileResponse file) {
+        profile.setPhotoFileId(file.getFileId());
+        profile.setPhotoFileName(file.getFileName());
+        profile.setPhotoUrl(file.getPhotoUrl());
+        profile.setPhotoMimeType(file.getMimeType());
+        profile.setPhotoSize(file.getSize());
     }
 
     private EmployeeProfileResponse mapToResponse(EmployeeProfile profile) {
@@ -94,7 +166,11 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
                 .employeeId(profile.getEmployee().getId())
                 .employeeCode(profile.getEmployee().getEmployeeCode())
                 .employeeName(profile.getEmployee().getFirstName() + " " + profile.getEmployee().getLastName())
+                .photoFileId(profile.getPhotoFileId())
+                .photoFileName(profile.getPhotoFileName())
                 .photoUrl(profile.getPhotoUrl())
+                .photoMimeType(profile.getPhotoMimeType())
+                .photoSize(profile.getPhotoSize())
                 .dateOfBirth(profile.getDateOfBirth())
                 .address(profile.getAddress())
                 .emergencyContactName(profile.getEmergencyContactName())

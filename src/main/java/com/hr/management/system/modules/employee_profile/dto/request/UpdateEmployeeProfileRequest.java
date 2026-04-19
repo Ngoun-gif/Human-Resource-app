@@ -10,9 +10,6 @@ import lombok.Setter;
 @Setter
 public class UpdateEmployeeProfileRequest {
 
-    @Size(max = 500, message = "Photo URL must not exceed 500 characters")
-    private String photoUrl;
-
     private LocalDate dateOfBirth;
 
     @Size(max = 255, message = "Address must not exceed 255 characters")

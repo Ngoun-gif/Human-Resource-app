@@ -103,6 +103,8 @@
             <scope>test</scope>
         </dependency>
 
+
+
         <dependency>
             <groupId>com.google.apis</groupId>
             <artifactId>google-api-services-drive</artifactId>
@@ -126,7 +128,17 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>0.4.21</version>
+        </dependency>
+
     </dependencies>
+
+
+
 
     <build>
         <plugins>

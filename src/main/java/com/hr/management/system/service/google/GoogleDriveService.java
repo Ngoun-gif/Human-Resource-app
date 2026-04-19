@@ -2,9 +2,11 @@ package com.hr.management.system.service.google;
 
 import java.io.IOException;
 
-import org.springframework.web.multipart.MultipartFile;
+import com.hr.management.system.service.google.dto.GoogleDriveFileResponse;
 
 public interface GoogleDriveService {
 
-    String uploadEmployeePhoto(MultipartFile file, String employeeCode) throws IOException;
+    GoogleDriveFileResponse uploadEmployeePhoto(byte[] fileData, String fileName, String contentType) throws IOException;
+
+    void deleteFile(String fileId) throws IOException;
 }

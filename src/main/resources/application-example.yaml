@@ -50,7 +50,7 @@ logging:
     console: "%clr(%d{HH:mm:ss}){faint} %clr(%5p) %clr(%logger{36}){cyan} - %m%n"
 
 google:
-  credentials:
-    path: google/credentials.json
   drive:
-    folder-id: 1E6KTxTn_V0-dv1NXXU0JIvVB2_lxxxxxxx
+    application-name: hr-management-system
+    folder-id: YOUR_FOLDER_ID
+    credentials-path: classpath:credentials/google-service-account.json

@@ -39,33 +39,46 @@ public class EmployeeProfile {
     @JoinColumn(name = "employee_id", nullable = false, unique = true)
     private Employee employee;
 
-    @Column(length = 500)
+    @Column(name = "photo_file_id", length = 255)
+    private String photoFileId;
+
+    @Column(name = "photo_file_name", length = 255)
+    private String photoFileName;
+
+    @Column(name = "photo_url", length = 500)
     private String photoUrl;
 
+    @Column(name = "photo_mime_type", length = 100)
+    private String photoMimeType;
+
+    @Column(name = "photo_size")
+    private Long photoSize;
+
+    @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
     @Column(length = 255)
     private String address;
 
-    @Column(length = 150)
+    @Column(name = "emergency_contact_name", length = 150)
     private String emergencyContactName;
 
-    @Column(length = 30)
+    @Column(name = "emergency_contact_phone", length = 30)
     private String emergencyContactPhone;
 
     @Column(length = 500)
     private String notes;
 
-    @Column(nullable = false, length = 100)
+    @Column(name = "created_by", nullable = false, length = 100)
     private String createdBy;
 
-    @Column(nullable = false, length = 100)
+    @Column(name = "updated_by", nullable = false, length = 100)
     private String updatedBy;
 
-    @Column(nullable = false)
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
     @PrePersist

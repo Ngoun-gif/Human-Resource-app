@@ -21,7 +21,12 @@ public class EmployeeProfileResponse {
     private String employeeCode;
     private String employeeName;
 
+    private String photoFileId;
+    private String photoFileName;
     private String photoUrl;
+    private String photoMimeType;
+    private Long photoSize;
+
     private LocalDate dateOfBirth;
     private String address;
     private String emergencyContactName;
