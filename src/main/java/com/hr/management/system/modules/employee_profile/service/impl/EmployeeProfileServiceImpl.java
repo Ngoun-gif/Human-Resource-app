@@ -79,12 +79,18 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
         profile.setUpdatedBy(SecurityUtils.getCurrentUsername());
 
         if (photo != null && !photo.isEmpty()) {
-            if (StringUtils.hasText(profile.getPhotoFileId())) {
-                googleDriveService.deleteFile(profile.getPhotoFileId());
-            }
+            String oldPhotoFileId = profile.getPhotoFileId();
 
             GoogleDriveFileResponse uploadedFile = uploadOptimizedPhoto(photo);
             applyPhotoMetadata(profile, uploadedFile);
+
+            EmployeeProfile savedProfile = employeeProfileRepository.save(profile);
+
+            if (StringUtils.hasText(oldPhotoFileId)) {
+                googleDriveService.deleteFile(oldPhotoFileId);
+            }
+
+            return mapToResponse(savedProfile);
         }
 
         return mapToResponse(employeeProfileRepository.save(profile));
