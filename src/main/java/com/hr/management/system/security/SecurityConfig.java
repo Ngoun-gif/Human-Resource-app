@@ -44,7 +44,10 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/v3/api-docs",
                                 "/v3/api-docs/**",
-                                "/error"
+                                "/error",
+                                "/oauth2/google/**",
+                                "/oauth2/callback/google",
+                                "/oauth2/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

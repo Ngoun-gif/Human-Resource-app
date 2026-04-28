@@ -18,7 +18,7 @@ import com.hr.management.system.modules.employee_profile.dto.response.EmployeePr
 import com.hr.management.system.modules.employee_profile.entity.EmployeeProfile;
 import com.hr.management.system.modules.employee_profile.repository.EmployeeProfileRepository;
 import com.hr.management.system.modules.employee_profile.service.EmployeeProfileService;
-import com.hr.management.system.service.google.GoogleDriveService;
+import com.hr.management.system.service.google.service.GoogleDriveService;
 import com.hr.management.system.service.google.dto.GoogleDriveFileResponse;
 import com.hr.management.system.service.image.ImageOptimizationService;
 import com.hr.management.system.service.image.dto.OptimizedImageResult;
