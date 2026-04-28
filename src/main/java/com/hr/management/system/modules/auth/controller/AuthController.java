@@ -38,4 +38,8 @@ public class AuthController {
     public ResponseEntity<AuthMeResponse> me(Authentication authentication) {
         return ResponseEntity.ok(authService.me(authentication.getName()));
     }
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout() {
+        return ResponseEntity.ok("Logged out successfully");
+    }
 }

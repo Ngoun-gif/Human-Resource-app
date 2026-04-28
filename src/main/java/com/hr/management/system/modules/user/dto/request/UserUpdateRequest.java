@@ -40,4 +40,6 @@ public class UserUpdateRequest {
 
     @NotEmpty(message = "At least one role is required")
     private Set<Long> roleIds;
+
+    private Long employeeId;
 }

@@ -17,6 +17,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class UserResponse {
+
     private Long id;
     private String username;
     private String email;
@@ -24,9 +25,15 @@ public class UserResponse {
     private String lastName;
     private String phone;
     private Boolean enabled;
+
+    private Long employeeId;
+    private String employeeCode;
+    private String employeeName;
+
     private String createdBy;
     private String updatedBy;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
     private Set<RoleResponse> roles;
 }

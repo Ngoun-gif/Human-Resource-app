@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.hr.management.system.common.dto.PageResponse;
+import com.hr.management.system.modules.employee.entity.Employee;
+import com.hr.management.system.modules.employee.repository.EmployeeRepository;
 import com.hr.management.system.modules.role.dto.response.RoleResponse;
 import com.hr.management.system.modules.role.entity.Role;
 import com.hr.management.system.modules.role.repository.RoleRepository;
@@ -34,6 +36,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final EmployeeRepository employeeRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -50,9 +53,14 @@ public class UserServiceImpl implements UserService {
 
         if (search != null && !search.isBlank()) {
             String keyword = search.trim();
+
             users = userRepository
                     .findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(
-                            keyword, keyword, keyword, keyword, pageable
+                            keyword,
+                            keyword,
+                            keyword,
+                            keyword,
+                            pageable
                     );
         } else {
             users = userRepository.findAll(pageable);
@@ -101,7 +109,11 @@ public class UserServiceImpl implements UserService {
                 .updatedBy(currentUsername)
                 .build();
 
-        return toResponse(userRepository.save(user));
+        User savedUser = userRepository.save(user);
+
+        linkEmployeeToUser(request.getEmployeeId(), savedUser);
+
+        return toResponse(savedUser);
     }
 
     @Override
@@ -142,7 +154,11 @@ public class UserServiceImpl implements UserService {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
 
-        return toResponse(userRepository.save(user));
+        User savedUser = userRepository.save(user);
+
+        linkEmployeeToUser(request.getEmployeeId(), savedUser);
+
+        return toResponse(savedUser);
     }
 
     @Override
@@ -153,7 +169,35 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("You cannot delete your own account");
         }
 
+        employeeRepository.findByUserId(user.getId())
+                .ifPresent(employee -> {
+                    employee.setUser(null);
+                    employeeRepository.save(employee);
+                });
+
         userRepository.delete(user);
+    }
+
+    private void linkEmployeeToUser(Long employeeId, User user) {
+        employeeRepository.findByUserId(user.getId())
+                .ifPresent(employee -> {
+                    employee.setUser(null);
+                    employeeRepository.save(employee);
+                });
+
+        if (employeeId == null) {
+            return;
+        }
+
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + employeeId));
+
+        if (employee.getUser() != null && !employee.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("Employee is already linked to another user");
+        }
+
+        employee.setUser(user);
+        employeeRepository.save(employee);
     }
 
     private User findUserById(Long id) {
@@ -177,7 +221,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private UserResponse toResponse(User user) {
-        return UserResponse.builder()
+        UserResponse response = UserResponse.builder()
                 .id(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())
@@ -202,6 +246,15 @@ public class UserServiceImpl implements UserService {
                                 .build())
                         .collect(Collectors.toSet()))
                 .build();
+
+        employeeRepository.findByUserId(user.getId())
+                .ifPresent(employee -> {
+                    response.setEmployeeId(employee.getId());
+                    response.setEmployeeCode(employee.getEmployeeCode());
+                    response.setEmployeeName(employee.getFirstName() + " " + employee.getLastName());
+                });
+
+        return response;
     }
 
     private String normalizeUsername(String value) {
@@ -216,6 +269,7 @@ public class UserServiceImpl implements UserService {
         if (value == null || value.isBlank()) {
             return null;
         }
+
         return value.trim();
     }
 
@@ -223,6 +277,7 @@ public class UserServiceImpl implements UserService {
         if (value == null || value.isBlank()) {
             return null;
         }
+
         return value.trim();
     }
 }
