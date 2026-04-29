@@ -23,6 +23,8 @@ import com.hr.management.system.service.google.dto.GoogleDriveFileResponse;
 import com.hr.management.system.service.image.ImageOptimizationService;
 import com.hr.management.system.service.image.dto.OptimizedImageResult;
 import com.hr.management.system.utils.SecurityUtils;
+import com.hr.management.system.modules.user.entity.User;
+import com.hr.management.system.modules.user.repository.UserRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +37,7 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
     private final EmployeeRepository employeeRepository;
     private final ImageOptimizationService imageOptimizationService;
     private final GoogleDriveService googleDriveService;
+    private final UserRepository userRepository;
 
     @Override
     public EmployeeProfileResponse create(CreateEmployeeProfileRequest request, MultipartFile photo) throws IOException {
@@ -187,5 +190,20 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
                 .createdAt(profile.getCreatedAt())
                 .updatedAt(profile.getUpdatedAt())
                 .build();
+    }
+    @Override
+    public EmployeeProfileResponse getMyProfile() {
+        String username = SecurityUtils.getCurrentUsername();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
+
+        Employee employee = employeeRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found for current user"));
+
+        EmployeeProfile profile = employeeProfileRepository.findByEmployeeId(employee.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Employee profile not found for current user"));
+
+        return mapToResponse(profile);
     }
 }

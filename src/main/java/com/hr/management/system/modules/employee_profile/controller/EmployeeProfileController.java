@@ -67,4 +67,9 @@ public class EmployeeProfileController {
         employeeProfileService.delete(id);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/me")
+    public ResponseEntity<EmployeeProfileResponse> getMyProfile() {
+        return ResponseEntity.ok(employeeProfileService.getMyProfile());
+    }
+
 }

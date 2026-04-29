@@ -20,6 +20,8 @@ public interface EmployeeProfileService {
 
     EmployeeProfileResponse getByEmployeeId(Long employeeId);
 
+    EmployeeProfileResponse getMyProfile();
+
     PageResponse<EmployeeProfileResponse> getAll(String search, Pageable pageable);
 
     void delete(Long id) throws IOException;

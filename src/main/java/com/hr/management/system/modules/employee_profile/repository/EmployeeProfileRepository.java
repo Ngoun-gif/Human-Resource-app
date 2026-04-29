@@ -13,6 +13,7 @@ public interface EmployeeProfileRepository extends JpaRepository<EmployeeProfile
 
     Optional<EmployeeProfile> findByEmployeeId(Long employeeId);
 
+
     boolean existsByEmployeeId(Long employeeId);
 
     @Query("""
