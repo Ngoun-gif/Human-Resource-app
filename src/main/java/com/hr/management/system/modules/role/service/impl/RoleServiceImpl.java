@@ -1,6 +1,8 @@
 package com.hr.management.system.modules.role.service.impl;
 
 import java.util.Locale;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +18,10 @@ import com.hr.management.system.modules.role.repository.RoleRepository;
 import com.hr.management.system.modules.role.service.RoleService;
 import com.hr.management.system.modules.user.repository.UserRepository;
 
+import com.hr.management.system.modules.permission.entity.Permission;
+import com.hr.management.system.modules.permission.repository.PermissionRepository;
+import com.hr.management.system.modules.role.dto.request.AssignPermissionsRequest;
+
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
@@ -28,6 +34,8 @@ public class RoleServiceImpl implements RoleService {
 
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
+
+    private final PermissionRepository permissionRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -119,6 +127,24 @@ public class RoleServiceImpl implements RoleService {
         roleRepository.delete(role);
     }
 
+    @Override
+    public RoleResponse assignPermissions(Long roleId, AssignPermissionsRequest request, String currentUsername) {
+        Role role = findRoleById(roleId);
+
+        Set<Permission> permissions = new HashSet<>(
+                permissionRepository.findAllById(request.getPermissionIds())
+        );
+
+        if (permissions.size() != request.getPermissionIds().size()) {
+            throw new EntityNotFoundException("One or more permissions not found");
+        }
+
+        role.setPermissions(permissions);
+        role.setUpdatedBy(currentUsername);
+
+        return toResponse(roleRepository.save(role));
+    }
+
     private Role findRoleById(Long id) {
         return roleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Role not found with id: " + id));
@@ -129,6 +155,15 @@ public class RoleServiceImpl implements RoleService {
                 .id(role.getId())
                 .name(role.getName())
                 .description(role.getDescription())
+
+                // ✅ ADD THIS
+                .permissions(
+                        role.getPermissions()
+                                .stream()
+                                .map(p -> p.getName())
+                                .collect(java.util.stream.Collectors.toSet())
+                )
+
                 .createdBy(role.getCreatedBy())
                 .updatedBy(role.getUpdatedBy())
                 .createdAt(role.getCreatedAt())

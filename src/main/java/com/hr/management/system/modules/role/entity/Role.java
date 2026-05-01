@@ -1,20 +1,13 @@
 package com.hr.management.system.modules.role.entity;
 
-import java.time.LocalDateTime;
+import com.hr.management.system.modules.permission.entity.Permission;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "roles")
@@ -35,6 +28,15 @@ public class Role {
     @Column(length = 255)
     private String description;
 
+    // 🔥 IMPORTANT (Permission mapping)
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "roles_permissions",
+            joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "permission_id")
+    )
+    private Set<Permission> permissions = new HashSet<>();
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -51,10 +53,7 @@ public class Role {
     public void prePersist() {
         LocalDateTime now = LocalDateTime.now();
 
-        if (this.createdAt == null) {
-            this.createdAt = now;
-        }
-
+        if (this.createdAt == null) this.createdAt = now;
         this.updatedAt = now;
 
         if (this.createdBy == null || this.createdBy.isBlank()) {

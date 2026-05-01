@@ -15,4 +15,5 @@ public class AuthMeResponse {
     private final String email;
     private final Boolean enabled;
     private final Set<String> roles;
+    private Set<String> permissions;
 }

@@ -1,23 +1,17 @@
-package com.hr.management.system.modules.role.dto.response;
-
-import java.time.LocalDateTime;
-import java.util.Set;
+package com.hr.management.system.modules.permission.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @Getter
-@Setter
 @Builder
-public class RoleResponse {
+public class PermissionResponse {
 
     private Long id;
     private String name;
     private String description;
-
-    // ✅ ADD THIS
-    private Set<String> permissions;
 
     private String createdBy;
     private String updatedBy;
