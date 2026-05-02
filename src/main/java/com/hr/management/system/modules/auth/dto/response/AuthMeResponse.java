@@ -5,15 +5,23 @@ import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class AuthMeResponse {
-    private final Long id;
-    private final String username;
-    private final String email;
-    private final Boolean enabled;
-    private final Set<String> roles;
+
+    private Long id;
+    private String username;
+    private String email;
+    private Boolean enabled;
+
+    private Set<String> roles;
     private Set<String> permissions;
+
+    private Set<AuthRoleResponse> roleDetails;
 }

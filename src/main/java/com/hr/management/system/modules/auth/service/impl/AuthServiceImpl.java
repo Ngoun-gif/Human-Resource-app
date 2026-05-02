@@ -3,6 +3,7 @@ package com.hr.management.system.modules.auth.service.impl;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.hr.management.system.modules.permission.entity.Permission;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.hr.management.system.modules.auth.dto.request.LoginRequest;
 import com.hr.management.system.modules.auth.dto.request.RegisterRequest;
 import com.hr.management.system.modules.auth.dto.response.AuthMeResponse;
+import com.hr.management.system.modules.auth.dto.response.AuthRoleResponse;
 import com.hr.management.system.modules.auth.dto.response.LoginResponse;
 import com.hr.management.system.modules.auth.service.AuthService;
 import com.hr.management.system.modules.role.entity.Role;
@@ -101,10 +103,18 @@ public class AuthServiceImpl implements AuthService {
                 .map(Role::getName)
                 .collect(Collectors.toSet());
 
+        Set<AuthRoleResponse> roleDetails = user.getRoles()
+                .stream()
+                .map(role -> AuthRoleResponse.builder()
+                        .name(role.getName())
+                        .description(role.getDescription())
+                        .build())
+                .collect(Collectors.toSet());
+
         Set<String> permissions = user.getRoles()
                 .stream()
                 .flatMap(role -> role.getPermissions().stream())
-                .map(permission -> permission.getName())
+                .map(Permission::getName)
                 .collect(Collectors.toSet());
 
         return AuthMeResponse.builder()
@@ -113,6 +123,7 @@ public class AuthServiceImpl implements AuthService {
                 .email(user.getEmail())
                 .enabled(user.getEnabled())
                 .roles(roles)
+                .roleDetails(roleDetails)
                 .permissions(permissions)
                 .build();
     }
