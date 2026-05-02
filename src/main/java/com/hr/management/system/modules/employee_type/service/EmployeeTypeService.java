@@ -1,9 +1,9 @@
 package com.hr.management.system.modules.employee_type.service;
 
 import com.hr.management.system.common.dto.PageResponse;
-import com.hr.management.system.modules.employee_type.dto.CreateEmployeeTypeRequest;
-import com.hr.management.system.modules.employee_type.dto.EmployeeTypeResponse;
-import com.hr.management.system.modules.employee_type.dto.UpdateEmployeeTypeRequest;
+import com.hr.management.system.modules.employee_type.dto.request.CreateEmployeeTypeRequest;
+import com.hr.management.system.modules.employee_type.dto.response.EmployeeTypeResponse;
+import com.hr.management.system.modules.employee_type.dto.request.UpdateEmployeeTypeRequest;
 
 public interface EmployeeTypeService {
 

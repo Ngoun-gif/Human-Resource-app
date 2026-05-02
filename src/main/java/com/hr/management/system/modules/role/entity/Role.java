@@ -28,7 +28,8 @@ public class Role {
     @Column(length = 255)
     private String description;
 
-    // 🔥 IMPORTANT (Permission mapping)
+    // Permission mapping
+    @Builder.Default
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "roles_permissions",

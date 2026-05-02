@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.hr.management.system.common.dto.PageResponse;
 import com.hr.management.system.modules.leave_type.dto.request.CreateLeaveTypeRequest;
-import com.hr.management.system.modules.leave_type.dto.LeaveTypeResponse;
+import com.hr.management.system.modules.leave_type.dto.response.LeaveTypeResponse;
 import com.hr.management.system.modules.leave_type.dto.request.UpdateLeaveTypeRequest;
 import com.hr.management.system.modules.leave_type.entity.LeaveType;
 import com.hr.management.system.modules.leave_type.repository.LeaveTypeRepository;

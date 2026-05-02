@@ -6,9 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.hr.management.system.common.dto.PageResponse;
-import com.hr.management.system.modules.employee_type.dto.CreateEmployeeTypeRequest;
-import com.hr.management.system.modules.employee_type.dto.EmployeeTypeResponse;
-import com.hr.management.system.modules.employee_type.dto.UpdateEmployeeTypeRequest;
+import com.hr.management.system.modules.employee_type.dto.request.CreateEmployeeTypeRequest;
+import com.hr.management.system.modules.employee_type.dto.response.EmployeeTypeResponse;
+import com.hr.management.system.modules.employee_type.dto.request.UpdateEmployeeTypeRequest;
 import com.hr.management.system.modules.employee_type.entity.EmployeeType;
 import com.hr.management.system.modules.employee_type.repository.EmployeeTypeRepository;
 import com.hr.management.system.modules.employee_type.service.EmployeeTypeService;

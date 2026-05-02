@@ -1,4 +1,4 @@
-package com.hr.management.system.modules.leave_type.dto;
+package com.hr.management.system.modules.leave_type.dto.response;
 
 import java.time.LocalDateTime;
 
